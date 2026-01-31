@@ -3,7 +3,7 @@ Projeto criado no curso "IA para Dev: Desenvolvendo Códigos com ChatGPT, Grok, 
 
 
 O projeto pode ser visualizado atraves do link:
-[https://claude.ai/public/artifacts/2888c72e-fce7-4ab6-aa16-b3b36b16790a](TelaEnviarComentarios)
+[Tela Enviar Comentários](https://stfnrosa.github.io/TelaEnviarComentarios)
 
 ---
 # Documentação Técnica - Sistema de Avaliação com Censura de Palavras
