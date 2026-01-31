@@ -1,5 +1,7 @@
 # Projeto IA para DEV: Tela de enviar comentários
 Projeto criado no curso "IA para Dev: Desenvolvendo Códigos com ChatGPT, Grok, Claude e Gemini"! Durante as aulas, aprendi a explorar ferramentas incríveis como o ChatGPT e o Google Gemini para otimizar o desenvolvimento de códigos. Além disso, apliquei técnicas de refatoração e validação em tempo real, melhorei a geração de protótipos funcionais e a correção dinâmica dos códigos. Compreendi a importância de criar prompts precisos para obter respostas eficazes e experimentei a integração com ambientes como Google Colab. Utilizando linguagens como Python e JavaScript, consegui fazer ajustes e melhorias significativas no meu código. 
+O projeto pode ser visualizado atraves do link abaixo:
+[https://claude.ai/public/artifacts/2888c72e-fce7-4ab6-aa16-b3b36b16790a](TelaEnviarComentarios)
 
 ---
 # Documentação Técnica - Sistema de Avaliação com Censura de Palavras
