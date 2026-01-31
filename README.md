@@ -14,6 +14,9 @@ Sistema web de avaliação de compras que implementa um formulário interativo c
 
 **Tecnologias:** HTML5, JavaScript ES6+, Tailwind CSS
 
+<img width="1280" height="633" alt="image" src="https://github.com/user-attachments/assets/13354b1b-9386-4240-8a2f-d90bd8451451" />
+
+
 **Características principais:**
 - Interface de avaliação em 3 níveis (Muito Bom, Regular, Ruim)
 - Sistema de censura de palavras em tempo de submissão
@@ -77,7 +80,8 @@ const states = {
 - Borda vermelha no campo de entrada
 - Ring (outline) vermelho no campo
 - Auto-focus no campo com erro
-- Auto-remoção do erro ao começar a digitar
+<img width="1280" height="633" alt="image" src="https://github.com/user-attachments/assets/e7c280d4-6a82-41be-9cb5-98fdd44cee70" />
+
 
 ---
 
@@ -151,6 +155,8 @@ function censurarTexto(texto, palavras) {
 // Saída
 "A ***** é ************ e o ***** foi um *******"
 ```
+<img width="1280" height="633" alt="image" src="https://github.com/user-attachments/assets/181834fa-124f-4cec-8872-3853c71b4d0e" />
+<img width="1280" height="633" alt="image" src="https://github.com/user-attachments/assets/e45ab629-5e37-4f92-84f2-29c772d1c708" />
 
 
 ### Função de Submissão (submitFeedback)
