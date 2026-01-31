@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avalie sua Compra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilização personalizada para o Slider (Range Input) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        /* Trilho do Slider */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        /* O "botão" do slider (Thumb) */
+        input[type=range]::-webkit-slider-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -8px; /* Centralizar no trilho */
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animação suave de cor de fundo */
+        body {
+            transition: background-color 0.7s ease-in-out;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<!-- Iniciamos com a classe bg-green-500 pois o slider começa no 0 -->
+<body id="mainBody" class="bg-green-500 h-screen flex items-center justify-center p-4 font-sans antialiased text-gray-800">
+
+    <!-- Container Principal -->
+    <div id="cardContainer" class="glass-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden p-8 transition-all duration-300 transform hover:scale-[1.01]">
+        
+        <!-- Estado 1: Formulário -->
+        <div id="formSection">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Avalie sua compra!</h1>
+                <p class="text-gray-500 text-sm">Como foi sua experiência conosco?</p>
+            </div>
+
+            <!-- Área do Slider -->
+            <div class="mb-8">
+                <div class="flex justify-between text-4xl mb-4 transition-all duration-300" id="emojiDisplay">
+                    <!-- O emoji muda via JS -->
+                    <span class="mx-auto block text-5xl animate-bounce">😄</span>
+                </div>
+                
+                <input type="range" id="sentimentRange" min="0" max="2" value="0" step="1" class="w-full mb-2">
+                
+                <div class="flex justify-between text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                    <span class="w-1/3 text-left">Muito Bom</span>
+                    <span class="w-1/3 text-center">Regular</span>
+                    <span class="w-1/3 text-right">Ruim</span>
+                </div>
+            </div>
+
+            <!-- Área de Comentário -->
+            <div class="mb-6">
+                <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Seu comentário (obrigatório)</label>
+                <textarea 
+                    id="comment" 
+                    rows="4" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-opacity-50 focus:outline-none transition-colors resize-none bg-gray-50 focus:bg-white"
+                    placeholder="Conte-nos o que você achou do produto..."></textarea>
+                <p id="errorMessage" class="hidden text-red-600 text-sm mt-2 font-semibold flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Por favor, escreva um comentário antes de enviar.
+                </p>
+            </div>
+
+            <!-- Botão de Enviar -->
+            <button 
+                onclick="submitFeedback()"
+                id="submitBtn"
+                class="w-full py-3 px-6 rounded-xl text-white font-bold text-lg shadow-lg transform transition hover:-translate-y-1 focus:outline-none ring-2 ring-offset-2 ring-transparent bg-gray-800 hover:bg-gray-900">
+                Enviar Avaliação
+            </button>
+        </div>
+
+        <!-- Estado 2: Agradecimento (Oculto inicialmente) -->
+        <div id="thankYouSection" class="hidden text-center py-10">
+            <div class="mb-6 text-6xl">🎉</div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Obrigado!</h2>
+            <p class="text-gray-600 mb-6">Recebemos seu feedback com sucesso.</p>
+            
+            <div class="bg-gray-100 rounded-lg p-4 text-left border-l-4 border-gray-400" id="resultCard">
+                <p class="text-xs text-gray-500 uppercase font-bold mb-1">Seu comentário:</p>
+                <p id="submittedComment" class="text-gray-800 italic">No comment provided.</p>
+            </div>
+
+            <button onclick="location.reload()" class="mt-8 text-sm text-gray-500 hover:text-gray-800 underline">
+                Avaliar novamente
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const body = document.getElementById('mainBody');
+        const rangeInput = document.getElementById('sentimentRange');
+        const submitBtn = document.getElementById('submitBtn');
+        const emojiDisplay = document.getElementById('emojiDisplay');
+        const commentInput = document.getElementById('comment');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Seções
+        const formSection = document.getElementById('formSection');
+        const thankYouSection = document.getElementById('thankYouSection');
+        const submittedComment = document.getElementById('submittedComment');
+        const resultCard = document.getElementById('resultCard');
+
+        // ===== SISTEMA DE CENSURA DE PALAVRAS =====
+        
+        /**
+         * Lista de palavras proibidas
+         * Em produção, isso poderia vir de um arquivo ou API
+         */
+        const palavrasProibidas = [
+            'teste',
+            'segredo',
+            'senha',
+            'confidencial',
+            'uva',
+            'proibido',
+            'idiota',
+            'burro',
+            'estúpido'
+        ];
+
+        /**
+         * Função que censura texto substituindo palavras proibidas por asteriscos
+         * Converte cada palavra em asteriscos com o mesmo tamanho
+         * @param {string} texto - O texto a ser censurado
+         * @param {Array<string>} palavras - Array de palavras proibidas
+         * @returns {string} - Texto censurado
+         */
+        function censurarTexto(texto, palavras) {
+            let textoCensurado = texto;
+
+            palavras.forEach(palavra => {
+                // Cria asteriscos com o mesmo tamanho da palavra
+                const asteriscos = '*'.repeat(palavra.length);
+                
+                // Cria uma expressão regular para encontrar a palavra (case-insensitive)
+                // Usa word boundary (\b) para pegar apenas palavras completas
+                const regex = new RegExp(`\\b${palavra}\\b`, 'gi');
+                
+                textoCensurado = textoCensurado.replace(regex, asteriscos);
+            });
+
+            return textoCensurado;
+        }
+
+        // Configuração dos estados (Cores e Emojis)
+        // 0 = Verde (Início), 1 = Amarelo (Meio), 2 = Vermelho (Fim)
+        const states = {
+            0: {
+                colorClass: 'bg-green-500',
+                borderColor: 'border-green-500',
+                emoji: '😄'
+            },
+            1: {
+                colorClass: 'bg-yellow-400',
+                borderColor: 'border-yellow-400',
+                emoji: '😐'
+            },
+            2: {
+                colorClass: 'bg-red-500',
+                borderColor: 'border-red-500',
+                emoji: '😡'
+            }
+        };
+
+        // Função para atualizar a interface baseada no slider
+        function updateUI(value) {
+            const state = states[value];
+
+            // Remove todas as classes de cor possíveis antes de adicionar a nova
+            body.classList.remove('bg-green-500', 'bg-yellow-400', 'bg-red-500');
+            body.classList.add(state.colorClass);
+
+            // Atualiza o emoji
+            emojiDisplay.innerHTML = `<span class="mx-auto block text-5xl animate-bounce">${state.emoji}</span>`;
+            
+            // Atualiza a borda do campo de comentário no JS para combinar (opcional, mas visualmente agradável)
+            // Mantemos a lógica de cor de foco, mas se estiver com erro (borda vermelha fixa), não mexemos agora
+            if (errorMessage.classList.contains('hidden')) {
+                commentInput.classList.remove('focus:ring-green-500', 'focus:ring-yellow-400', 'focus:ring-red-500');
+                commentInput.classList.add(`focus:ring-${value == 0 ? 'green-500' : value == 1 ? 'yellow-400' : 'red-500'}`);
+            }
+        }
+
+        // Listener para mudanças no slider (Input event acontece enquanto arrasta)
+        rangeInput.addEventListener('input', (e) => {
+            updateUI(e.target.value);
+        });
+
+        // Remove o erro quando o usuário começa a digitar
+        commentInput.addEventListener('input', () => {
+            if (!errorMessage.classList.contains('hidden')) {
+                errorMessage.classList.add('hidden');
+                commentInput.classList.remove('border-red-500', 'ring-2', 'ring-red-500');
+                // Reaplicar a cor de foco correta baseada no slider atual
+                updateUI(rangeInput.value);
+            }
+        });
+
+        // Inicializar UI correta ao carregar
+        updateUI(0);
+
+        // Função de Envio
+        function submitFeedback() {
+            const comment = commentInput.value.trim();
+            
+            // Validação: Se vazio, mostra erro e para a execução
+            if (!comment) {
+                errorMessage.classList.remove('hidden');
+                commentInput.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+                commentInput.focus();
+                return;
+            }
+
+            const currentValue = rangeInput.value;
+            const state = states[currentValue];
+
+            // ===== APLICAR CENSURA NO COMENTÁRIO =====
+            const comentarioCensurado = censurarTexto(comment, palavrasProibidas);
+
+            // Prepara a tela de agradecimento com o texto CENSURADO
+            submittedComment.textContent = `"${comentarioCensurado}"`;
+
+            // Colore a borda do resultado com a cor da avaliação
+            resultCard.classList.remove('border-green-500', 'border-yellow-400', 'border-red-500'); // Clean slate (although inline styles safer here in complex apps)
+            // Como estamos usando classes tailwind dinamicamente no objeto 'states', aplicamos aqui:
+            // Nota: border-l-4 já está no HTML, só mudamos a cor
+            resultCard.className = `bg-gray-100 rounded-lg p-4 text-left border-l-4 ${state.borderColor}`;
+
+            // Troca as telas com uma animação simples
+            formSection.classList.add('hidden');
+            thankYouSection.classList.remove('hidden');
+            thankYouSection.classList.add('animate-fade-in-up');
+        }
+    </script>
+</body>
+</html>
